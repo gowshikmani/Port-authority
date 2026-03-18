@@ -1,0 +1,25 @@
+{
+  "name": "port-authority-system",
+  "version": "1.0.0",
+  "description": "Port Website used by Port Administration",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "test": "console.log(\"Hello\")"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gowshikmani/Port-authority.git"
+  },
+  "keywords": [
+    "Port-Authority"
+  ],
+  "author": "Gowshik Manikandan",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/gowshikmani/Port-authority/issues"
+  },
+  "homepage": "https://github.com/gowshikmani/Port-authority#readme"
+}
