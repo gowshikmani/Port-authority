@@ -21,5 +21,11 @@
   "bugs": {
     "url": "https://github.com/gowshikmani/Port-authority/issues"
   },
-  "homepage": "https://github.com/gowshikmani/Port-authority#readme"
+  "homepage": "https://github.com/gowshikmani/Port-authority#readme",
+  "dependencies": {
+    "express": "^5.2.1",
+    "mongodb": "^7.1.0",
+    "mongoose": "^9.3.1",
+    "vite": "^8.0.1"
+  }
 }
