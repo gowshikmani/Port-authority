@@ -28,6 +28,8 @@
     "eslint-plugin-react-refresh": "^0.5.2",
     "globals": "^17.4.0",
     "postcss": "^8.5.8",
+    "stylelint": "^17.5.0",
+    "stylelint-config-tailwindcss": "^1.0.1",
     "tailwindcss": "^4.2.2",
     "vite": "^8.0.0"
   }

@@ -1,0 +1,4 @@
+{
+  "extends": "stylelint-config-tailwindcss",
+  "ignoreFiles": ["**/*.min.css", "**/node_modules/**"]
+}
