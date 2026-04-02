@@ -1,6 +1,21 @@
 @import "tailwindcss";
 @layer base {
   body {
+    @apply bg-white text-gray-900;
+  }
+
+  .dark body {
     @apply bg-gray-900 text-white;
+  }
+
+  .invert-colors body {
+    filter: invert(1) hue-rotate(180deg);
+    background-color: inherit;
+  }
+
+  .invert-colors img,
+  .invert-colors video,
+  .invert-colors svg {
+    filter: invert(1) hue-rotate(180deg);
   }
 }
