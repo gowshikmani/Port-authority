@@ -20,8 +20,8 @@ function SignUp() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-slate-900">
-      <div className="w-[360px] p-6 bg-white dark:bg-gray-800 shadow rounded">
-        <h1 className="text-2xl font-bold mb-4 text-gray-900 dark:text-white">Sign Up</h1>
+      <div className="w-[360px] p-6 bg-white dark:bg-gray-800 shadow rounded text-gray-900 dark:text-white">
+        <h1 className="text-2xl font-bold mb-4">Sign Up</h1>
         {error && <div className="mb-3 text-red-500">{error}</div>}
 
         <form onSubmit={handleSubmit} className="space-y-3">
@@ -31,7 +31,7 @@ function SignUp() {
             value={form.name}
             onChange={(e) => setForm({ ...form, name: e.target.value })}
             required
-            className="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white dark:border-gray-600"
           />
           <input
             type="email"
@@ -39,7 +39,7 @@ function SignUp() {
             value={form.email}
             onChange={(e) => setForm({ ...form, email: e.target.value })}
             required
-            className="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white dark:border-gray-600"
           />
           <input
             type="password"
@@ -47,7 +47,7 @@ function SignUp() {
             value={form.password}
             onChange={(e) => setForm({ ...form, password: e.target.value })}
             required
-            className="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white dark:border-gray-600"
           />
           <button
             type="submit"
@@ -57,7 +57,7 @@ function SignUp() {
           </button>
         </form>
 
-        <p className="mt-4 text-sm text-gray-600 dark:text-gray-300">
+        <p className="mt-4 text-sm">
           Already have an account? <Link to="/login" className="text-blue-500 underline">Login</Link>
         </p>
       </div>

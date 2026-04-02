@@ -45,19 +45,19 @@ function Ships() {
       <form onSubmit={handleSubmit} className="flex gap-2 mb-6">
         <input
           placeholder="Name"
-          className="border p-2"
+          className="border p-2 bg-white dark:bg-gray-800 text-gray-900 dark:text-white dark:border-gray-700"
           value={form.name}
           onChange={(e) => setForm({ ...form, name: e.target.value })}
         />
         <input
           placeholder="IMO"
-          className="border p-2"
+          className="border p-2 bg-white dark:bg-gray-800 text-gray-900 dark:text-white dark:border-gray-700"
           value={form.imoNumber}
           onChange={(e) => setForm({ ...form, imoNumber: e.target.value })}
         />
         <input
           type="datetime-local"
-          className="border p-2"
+          className="border p-2 bg-white dark:bg-gray-800 text-gray-900 dark:text-white dark:border-gray-700"
           value={form.arrivalTime}
           onChange={(e) => setForm({ ...form, arrivalTime: e.target.value })}
         />
@@ -65,9 +65,9 @@ function Ships() {
       </form>
 
       {/* Table */}
-      <table className="w-full bg-white shadow rounded">
+      <table className="w-full bg-white dark:bg-gray-800 shadow rounded text-gray-900 dark:text-white">
         <thead>
-          <tr className="bg-gray-200">
+          <tr className="bg-gray-200 dark:bg-gray-700">
             <th className="p-2">Name</th>
             <th className="p-2">IMO</th>
             <th className="p-2">Status</th>
@@ -76,7 +76,7 @@ function Ships() {
 
         <tbody>
           {ships.map((ship) => (
-            <tr key={ship._id} className="text-center border-t">
+            <tr key={ship._id} className="text-center border-t dark:border-gray-700">
               <td className="p-2">{ship.name}</td>
               <td className="p-2">{ship.imoNumber}</td>
               <td className="p-2">{ship.status}</td>

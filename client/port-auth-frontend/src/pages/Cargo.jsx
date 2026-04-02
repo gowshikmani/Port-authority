@@ -79,7 +79,7 @@ function Cargo() {
       <form onSubmit={handleSubmit} className="flex gap-3 mb-6">
         <input
           placeholder="Type"
-          className="border p-2"
+          className="border p-2 bg-white dark:bg-gray-800 text-gray-900 dark:text-white dark:border-gray-700"
           value={form.type}
           onChange={(e) => setForm({ ...form, type: e.target.value })}
           required
@@ -88,7 +88,7 @@ function Cargo() {
         <input
           placeholder="Weight"
           type="number"
-          className="border p-2"
+          className="border p-2 bg-white dark:bg-gray-800 text-gray-900 dark:text-white dark:border-gray-700"
           value={form.weight}
           onChange={(e) => setForm({ ...form, weight: e.target.value })}
           required
@@ -96,7 +96,7 @@ function Cargo() {
         />
 
         <select
-          className="border p-2"
+          className="border p-2 bg-white dark:bg-gray-800 text-gray-900 dark:text-white dark:border-gray-700"
           value={form.shipId}
           onChange={(e) => setForm({ ...form, shipId: e.target.value })}
           required
@@ -117,10 +117,10 @@ function Cargo() {
       </form>
 
       {/* Table */}
-      <div className="bg-white p-4 shadow rounded">
+      <div className="bg-white dark:bg-gray-800 p-4 shadow rounded text-gray-900 dark:text-white">
         <table className="w-full">
           <thead>
-            <tr className="bg-gray-200">
+            <tr className="bg-gray-200 dark:bg-gray-700">
               <th className="p-2">Type</th>
               <th className="p-2">Weight</th>
               <th className="p-2">Ship</th>
@@ -131,7 +131,7 @@ function Cargo() {
 
           <tbody>
             {cargoList.map((cargo) => (
-              <tr key={cargo._id} className="border-t text-center">
+              <tr key={cargo._id} className="border-t dark:border-gray-700 text-center">
                 <td className="p-2">{cargo.type}</td>
                 <td className="p-2">{cargo.weight}</td>
                 <td className="p-2">{cargo.ship?.name}</td>
@@ -142,7 +142,7 @@ function Cargo() {
                     onChange={(e) =>
                       updateStatus(cargo._id, e.target.value)
                     }
-                    className="border p-1"
+                    className="border p-1 bg-white dark:bg-gray-800 text-gray-900 dark:text-white dark:border-gray-700"
                     defaultValue=""
                   >
                     <option value="" disabled>

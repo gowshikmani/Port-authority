@@ -57,7 +57,7 @@ function Containers() {
       <form onSubmit={handleSubmit} className="flex gap-3 mb-6">
         <input
           placeholder="Container ID"
-          className="border p-2"
+          className="border p-2 bg-white dark:bg-gray-800 text-gray-900 dark:text-white dark:border-gray-700"
           onChange={(e) =>
             setForm({ ...form, containerId: e.target.value })
           }
@@ -66,14 +66,14 @@ function Containers() {
         <input
           placeholder="Weight"
           type="number"
-          className="border p-2"
+          className="border p-2 bg-white dark:bg-gray-800 text-gray-900 dark:text-white dark:border-gray-700"
           onChange={(e) =>
             setForm({ ...form, weight: e.target.value })
           }
         />
 
         <select
-          className="border p-2"
+          className="border p-2 bg-white dark:bg-gray-800 text-gray-900 dark:text-white dark:border-gray-700"
           onChange={(e) =>
             setForm({ ...form, cargoId: e.target.value })
           }
@@ -92,10 +92,10 @@ function Containers() {
       </form>
 
       {/* Table */}
-      <div className="bg-white p-4 shadow rounded">
+      <div className="bg-white dark:bg-gray-800 p-4 shadow rounded text-gray-900 dark:text-white">
         <table className="w-full">
           <thead>
-            <tr className="bg-gray-200">
+            <tr className="bg-gray-200 dark:bg-gray-700">
               <th className="p-2">Container ID</th>
               <th className="p-2">Weight</th>
               <th className="p-2">Cargo</th>
@@ -106,7 +106,7 @@ function Containers() {
 
           <tbody>
             {containers.map((c) => (
-              <tr key={c._id} className="border-t text-center">
+              <tr key={c._id} className="border-t dark:border-gray-700 text-center">
                 <td className="p-2">{c.containerId}</td>
                 <td className="p-2">{c.weight}</td>
                 <td className="p-2">
@@ -119,7 +119,7 @@ function Containers() {
                     onChange={(e) =>
                       updateLocation(c._id, e.target.value)
                     }
-                    className="border p-1"
+                    className="border p-1 bg-white dark:bg-gray-800 text-gray-900 dark:text-white dark:border-gray-700"
                   >
                     <option>Move</option>
                     <option value="Ship">Ship</option>

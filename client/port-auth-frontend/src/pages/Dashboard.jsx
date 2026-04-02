@@ -42,47 +42,47 @@ function Dashboard() {
 
   return (
     <div>
-      <h1 className="text-2xl font-bold mb-6">Dashboard</h1>
+      <h1 className="text-2xl font-bold mb-6 text-gray-900 dark:text-white">Dashboard</h1>
 
       {/* Stats */}
       <div className="grid grid-cols-5 gap-4 mb-6">
-        <div className="bg-white p-4 rounded shadow">
+        <div className="bg-white dark:bg-gray-800 p-4 rounded shadow text-gray-900 dark:text-white">
           <h2>Total Ships</h2>
           <p className="text-xl font-bold">{stats.ships}</p>
         </div>
 
-        <div className="bg-white p-4 rounded shadow">
+        <div className="bg-white dark:bg-gray-800 p-4 rounded shadow text-gray-900 dark:text-white">
           <h2>Total Docks</h2>
           <p className="text-xl font-bold">{stats.docks}</p>
         </div>
 
-        <div className="bg-white p-4 rounded shadow">
+        <div className="bg-white dark:bg-gray-800 p-4 rounded shadow text-gray-900 dark:text-white">
           <h2>Occupied Docks</h2>
           <p className="text-xl font-bold text-red-500">
             {stats.occupiedDocks}
           </p>
         </div>
 
-        <div className="bg-white p-4 rounded shadow">
+        <div className="bg-white dark:bg-gray-800 p-4 rounded shadow text-gray-900 dark:text-white">
           <h2>Total Cargo</h2>
           <p className="text-xl font-bold">{stats.cargo}</p>
         </div>
 
-        <div className="bg-white p-4 rounded shadow">
+        <div className="bg-white dark:bg-gray-800 p-4 rounded shadow text-gray-900 dark:text-white">
           <h2>Containers</h2>
           <p className="text-xl font-bold">{stats.containers}</p>
         </div>
       </div>
 
       {/* Container Movement Overview */}
-      <div className="bg-white p-4 rounded shadow">
+      <div className="bg-white dark:bg-gray-800 p-4 rounded shadow text-gray-900 dark:text-white">
         <h2 className="text-lg font-bold mb-4">
           Container Locations
         </h2>
 
         <table className="w-full text-center">
           <thead>
-            <tr className="bg-gray-200">
+            <tr className="bg-gray-200 dark:bg-gray-700">
               <th className="p-2">Container</th>
               <th className="p-2">Cargo</th>
               <th className="p-2">Location</th>
@@ -91,7 +91,7 @@ function Dashboard() {
 
           <tbody>
             {containers.slice(0, 5).map((c) => (
-              <tr key={c._id} className="border-t">
+              <tr key={c._id} className="border-t dark:border-gray-700">
                 <td className="p-2">{c.containerId}</td>
                 <td className="p-2">{c.cargo?.type}</td>
                 <td className="p-2">{c.location}</td>

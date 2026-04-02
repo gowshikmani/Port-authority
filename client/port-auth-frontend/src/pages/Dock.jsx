@@ -53,9 +53,9 @@ function Dock() {
       <h1 className="text-2xl font-bold mb-6">Dock Management</h1>
 
       {/* Assignment Section */}
-      <div className="bg-white p-4 shadow rounded mb-6 flex gap-4">
+      <div className="bg-white dark:bg-gray-800 p-4 shadow rounded mb-6 flex gap-4 text-gray-900 dark:text-white">
         <select
-          className="border p-2"
+          className="border p-2 bg-white dark:bg-gray-800 text-gray-900 dark:text-white dark:border-gray-700"
           onChange={(e) => setSelectedDock(e.target.value)}
         >
           <option>Select Dock</option>
@@ -67,7 +67,7 @@ function Dock() {
         </select>
 
         <select
-          className="border p-2"
+          className="border p-2 bg-white dark:bg-gray-800 text-gray-900 dark:text-white dark:border-gray-700"
           onChange={(e) => setSelectedShip(e.target.value)}
         >
           <option>Select Ship</option>
@@ -87,10 +87,10 @@ function Dock() {
       </div>
 
       {/* Dock Table */}
-      <div className="bg-white p-4 shadow rounded">
+      <div className="bg-white dark:bg-gray-800 p-4 shadow rounded text-gray-900 dark:text-white">
         <table className="w-full">
           <thead>
-            <tr className="bg-gray-200">
+            <tr className="bg-gray-200 dark:bg-gray-700">
               <th className="p-2">Dock</th>
               <th className="p-2">Status</th>
               <th className="p-2">Ships</th>
@@ -99,7 +99,7 @@ function Dock() {
 
           <tbody>
             {docks.map((dock) => (
-              <tr key={dock._id} className="border-t text-center">
+              <tr key={dock._id} className="border-t dark:border-gray-700 text-center">
                 <td className="p-2">{dock.dockNumber}</td>
                 <td className="p-2">{dock.status}</td>
 
