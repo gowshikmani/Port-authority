@@ -11,16 +11,21 @@ exports.addCargo = async (req, res) => {
       return res.status(404).json({ error: "Ship not found" });
     }
 
+    const numericWeight = Number(weight);
+    if (Number.isNaN(numericWeight) || numericWeight <= 0) {
+      return res.status(400).json({ error: "Invalid cargo weight" });
+    }
+
     const cargo = new Cargo({
       type,
-      weight,
+      weight: numericWeight,
       ship: shipId
     });
 
     await cargo.save();
 
     // Update ship total cargo weight
-    ship.cargoWeight += weight;
+    ship.cargoWeight = (ship.cargoWeight || 0) + numericWeight;
     await ship.save();
 
     res.status(201).json(cargo);

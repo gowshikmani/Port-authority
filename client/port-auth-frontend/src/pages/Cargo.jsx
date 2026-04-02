@@ -24,25 +24,51 @@ function Cargo() {
   };
 
   useEffect(() => {
-    fetchCargo();
-    fetchShips();
+    const load = async () => {
+      await Promise.all([fetchCargo(), fetchShips()]);
+    };
+
+    load();
   }, []);
 
   // Add cargo
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    await axios.post("http://localhost:5000/api/cargo", form);
-    fetchCargo();
+    try {
+      const payload = {
+        type: form.type.trim(),
+        weight: Number(form.weight),
+        shipId: form.shipId
+      };
+
+      if (!payload.type || !payload.weight || !payload.shipId) {
+        alert("Please fill all cargo fields.");
+        return;
+      }
+
+      await axios.post("http://localhost:5000/api/cargo", payload);
+      setForm({ type: "", weight: "", shipId: "" });
+      fetchCargo();
+    } catch (error) {
+      console.error(error);
+      alert(error?.response?.data?.error || "Failed to add cargo.");
+    }
   };
 
   // Update status
   const updateStatus = async (id, status) => {
-    await axios.put(`http://localhost:5000/api/cargo/${id}/status`, {
-      status
-    });
+    if (!status || status === "Update") return;
 
-    fetchCargo();
+    try {
+      await axios.put(`http://localhost:5000/api/cargo/${id}/status`, {
+        status
+      });
+      fetchCargo();
+    } catch (error) {
+      console.error(error);
+      alert(error?.response?.data?.error || "Failed to update status.");
+    }
   };
 
   return (
@@ -54,21 +80,30 @@ function Cargo() {
         <input
           placeholder="Type"
           className="border p-2"
+          value={form.type}
           onChange={(e) => setForm({ ...form, type: e.target.value })}
+          required
         />
 
         <input
           placeholder="Weight"
           type="number"
           className="border p-2"
+          value={form.weight}
           onChange={(e) => setForm({ ...form, weight: e.target.value })}
+          required
+          min={1}
         />
 
         <select
           className="border p-2"
+          value={form.shipId}
           onChange={(e) => setForm({ ...form, shipId: e.target.value })}
+          required
         >
-          <option>Select Ship</option>
+          <option value="" disabled>
+            Select Ship
+          </option>
           {ships.map((ship) => (
             <option key={ship._id} value={ship._id}>
               {ship.name}
@@ -108,8 +143,11 @@ function Cargo() {
                       updateStatus(cargo._id, e.target.value)
                     }
                     className="border p-1"
+                    defaultValue=""
                   >
-                    <option>Update</option>
+                    <option value="" disabled>
+                      Update
+                    </option>
                     <option value="Loading">Loading</option>
                     <option value="Unloading">Unloading</option>
                     <option value="Stored">Stored</option>

@@ -12,19 +12,13 @@ function Dashboard() {
 
   const [containers, setContainers] = useState([]);
 
-  useEffect(() => {
-    fetchData();
-  }, []);
-
-  const fetchData = async () => {
+  async function fetchData() {
     const ships = await axios.get("http://localhost:5000/api/ships");
     const docks = await axios.get("http://localhost:5000/api/docks");
     const cargo = await axios.get("http://localhost:5000/api/cargo");
     const containersRes = await axios.get("http://localhost:5000/api/containers");
 
-    const occupied = docks.data.filter(
-      (d) => d.status === "Occupied"
-    ).length;
+    const occupied = docks.data.filter((d) => d.status === "Occupied").length;
 
     setStats({
       ships: ships.data.length,
@@ -35,7 +29,16 @@ function Dashboard() {
     });
 
     setContainers(containersRes.data);
-  };
+  }
+
+  useEffect(() => {
+    const load = async () => {
+      await fetchData();
+    };
+
+    load();
+  }, []);
+
 
   return (
     <div>

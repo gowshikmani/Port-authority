@@ -20,8 +20,11 @@ function Dock() {
   };
 
   useEffect(() => {
-    fetchDocks();
-    fetchShips();
+    const load = async () => {
+      await Promise.all([fetchDocks(), fetchShips()]);
+    };
+
+    load();
   }, []);
 
   // Assign ship to dock

@@ -16,7 +16,11 @@ function Ships() {
   };
 
   useEffect(() => {
-    fetchShips();
+    const load = async () => {
+      await fetchShips();
+    };
+
+    load();
   }, []);
 
   // Add ship

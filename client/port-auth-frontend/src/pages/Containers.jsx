@@ -24,8 +24,11 @@ function Containers() {
   };
 
   useEffect(() => {
-    fetchContainers();
-    fetchCargo();
+    const load = async () => {
+      await Promise.all([fetchContainers(), fetchCargo()]);
+    };
+
+    load();
   }, []);
 
   // Add container
