@@ -10,11 +10,15 @@ function Login() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+      console.log("Logging in with:", form);
       const res = await axios.post("http://localhost:5000/api/auth/login", form);
+      console.log("Login response:", res.data);
       localStorage.setItem("auth", JSON.stringify(res.data));
+      console.log("Auth stored:", localStorage.getItem("auth"));
       setError("");
       navigate("/");
     } catch (err) {
+      console.error("Login error:", err);
       setError(err?.response?.data?.error || "Invalid login.");
     }
   };

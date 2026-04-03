@@ -6,6 +6,7 @@ function Dock() {
   const [ships, setShips] = useState([]);
   const [selectedDock, setSelectedDock] = useState("");
   const [selectedShip, setSelectedShip] = useState("");
+  const [dockForm, setDockForm] = useState({ dockNumber: "", capacity: 1 });
 
   // Fetch docks
   const fetchDocks = async () => {
@@ -26,6 +27,19 @@ function Dock() {
 
     load();
   }, []);
+
+  // Add dock
+  const handleAddDock = async (e) => {
+    e.preventDefault();
+    try {
+      await axios.post("http://localhost:5000/api/docks", dockForm);
+      setDockForm({ dockNumber: "", capacity: 1 });
+      fetchDocks();
+    } catch (error) {
+      console.error("Failed to add dock", error);
+      alert("Failed to add dock. Check console for details.");
+    }
+  };
 
   // Assign ship to dock
   const assignShip = async () => {
@@ -50,7 +64,33 @@ function Dock() {
 
   return (
     <div>
-      <h1 className="text-2xl font-bold mb-6">Dock Management</h1>
+      <h1 className="text-2xl font-bold mb-6 text-gray-900 dark:text-white">Dock Management</h1>
+
+      {/* Add Dock Form */}
+      <form onSubmit={handleAddDock} className="bg-white dark:bg-gray-800 p-4 shadow rounded mb-6 flex gap-4 text-gray-900 dark:text-white">
+        <input
+          type="text"
+          placeholder="Dock Number"
+          value={dockForm.dockNumber}
+          onChange={(e) => setDockForm({ ...dockForm, dockNumber: e.target.value })}
+          required
+          className="border p-2 bg-white dark:bg-gray-800 text-gray-900 dark:text-white dark:border-gray-700"
+        />
+        <input
+          type="number"
+          placeholder="Capacity"
+          value={dockForm.capacity}
+          onChange={(e) => setDockForm({ ...dockForm, capacity: parseInt(e.target.value) })}
+          min="1"
+          className="border p-2 bg-white dark:bg-gray-800 text-gray-900 dark:text-white dark:border-gray-700"
+        />
+        <button
+          type="submit"
+          className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+        >
+          Add Dock
+        </button>
+      </form>
 
       {/* Assignment Section */}
       <div className="bg-white dark:bg-gray-800 p-4 shadow rounded mb-6 flex gap-4 text-gray-900 dark:text-white">

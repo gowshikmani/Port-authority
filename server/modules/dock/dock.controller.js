@@ -55,3 +55,29 @@ exports.removeShipFromDock = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
+
+exports.getDocks = async (req, res) => {
+  try {
+    const docks = await Dock.find().populate("currentShips");
+    res.json(docks);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+exports.createDock = async (req, res) => {
+  try {
+    const { dockNumber, capacity } = req.body;
+
+    if (!dockNumber) {
+      return res.status(400).json({ error: "Dock number is required" });
+    }
+
+    const dock = new Dock({ dockNumber, capacity: capacity || 1 });
+    await dock.save();
+
+    res.status(201).json(dock);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
