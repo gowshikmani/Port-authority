@@ -10,22 +10,41 @@ function Containers() {
     weight: "",
     cargoId: ""
   });
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
   // Fetch containers
   const fetchContainers = async () => {
-    const res = await axios.get("http://localhost:5000/api/containers");
-    setContainers(res.data);
+    try {
+      const res = await axios.get("http://localhost:5000/api/containers");
+      setContainers(res.data);
+    } catch (err) {
+      setError("Failed to fetch containers.");
+      console.error("Error fetching containers:", err);
+    }
   };
 
   // Fetch cargo
   const fetchCargo = async () => {
-    const res = await axios.get("http://localhost:5000/api/cargo");
-    setCargoList(res.data);
+    try {
+      const res = await axios.get("http://localhost:5000/api/cargo");
+      setCargoList(res.data);
+    } catch (err) {
+      setError("Failed to fetch cargo list.");
+      console.error("Error fetching cargo:", err);
+    }
   };
 
   useEffect(() => {
     const load = async () => {
-      await Promise.all([fetchContainers(), fetchCargo()]);
+      try {
+        await Promise.all([fetchContainers(), fetchCargo()]);
+      } catch (err) {
+        setError("Failed to load initial data.");
+        console.error("Error loading initial container data:", err);
+      } finally {
+        setLoading(false);
+      }
     };
 
     load();
@@ -34,33 +53,64 @@ function Containers() {
   // Add container
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    await axios.post("http://localhost:5000/api/containers", form);
-    fetchContainers();
+    setError("");
+    if (!form.containerId || !form.weight || !form.cargoId) {
+      setError("Please fill all fields for the container.");
+      return;
+    }
+    try {
+      await axios.post("http://localhost:5000/api/containers", form);
+      setForm({ containerId: "", weight: "", cargoId: "" }); // Clear form
+      await fetchContainers();
+    } catch (err) {
+      setError(err?.response?.data?.error || "Failed to add container.");
+      console.error("Error adding container:", err);
+    }
   };
 
   // Update location
   const updateLocation = async (id, location) => {
-    await axios.put(
-      `http://localhost:5000/api/containers/${id}/location`,
-      { location }
-    );
-
-    fetchContainers();
+    setError("");
+    try {
+      await axios.put(
+        `http://localhost:5000/api/containers/${id}/location`,
+        { location }
+      );
+      await fetchContainers();
+    } catch (err) {
+      setError(err?.response?.data?.error || "Failed to update container location.");
+      console.error("Error updating location:", err);
+    }
   };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
+      </div>
+    );
+  }
 
   return (
     <div>
-      <h1 className="text-2xl font-bold mb-6">Container Management</h1>
+      <h1 className="text-2xl font-bold mb-6 text-gray-900 dark:text-white">Container Management</h1>
+
+      {error && (
+        <div className="mb-4 p-3 bg-red-100 border-l-4 border-red-500 text-red-700 text-sm rounded">
+          {error}
+        </div>
+      )}
 
       {/* Form */}
-      <form onSubmit={handleSubmit} className="flex gap-3 mb-6">
+      <form onSubmit={handleSubmit} className="bg-white dark:bg-gray-800 p-6 shadow-lg rounded-xl mb-6 flex flex-col md:flex-row gap-4 text-gray-900 dark:text-white border border-gray-100 dark:border-gray-700">
         <input
           placeholder="Container ID"
           className="border p-2 bg-white dark:bg-gray-800 text-gray-900 dark:text-white dark:border-gray-700"
           onChange={(e) =>
             setForm({ ...form, containerId: e.target.value })
           }
+          value={form.containerId}
+          required
         />
 
         <input
@@ -70,6 +120,9 @@ function Containers() {
           onChange={(e) =>
             setForm({ ...form, weight: e.target.value })
           }
+          value={form.weight}
+          required
+          min="1"
         />
 
         <select
@@ -77,8 +130,10 @@ function Containers() {
           onChange={(e) =>
             setForm({ ...form, cargoId: e.target.value })
           }
+          value={form.cargoId}
+          required
         >
-          <option>Select Cargo</option>
+          <option value="" disabled>Select Cargo</option>
           {cargoList.map((cargo) => (
             <option key={cargo._id} value={cargo._id}>
               {cargo.type} ({cargo.ship?.name})
@@ -86,42 +141,45 @@ function Containers() {
           ))}
         </select>
 
-        <button className="bg-purple-500 text-white px-4">
+        <button type="submit" className="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition-colors">
           Add Container
         </button>
       </form>
 
       {/* Table */}
-      <div className="bg-white dark:bg-gray-800 p-4 shadow rounded text-gray-900 dark:text-white">
-        <table className="w-full">
-          <thead>
-            <tr className="bg-gray-200 dark:bg-gray-700">
-              <th className="p-2">Container ID</th>
-              <th className="p-2">Weight</th>
-              <th className="p-2">Cargo</th>
-              <th className="p-2">Location</th>
-              <th className="p-2">Move</th>
+      <div className="bg-white dark:bg-gray-800 p-6 shadow-lg rounded-xl text-gray-900 dark:text-white border border-gray-100 dark:border-gray-700 overflow-x-auto">
+        <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+          <thead className="bg-gray-50 dark:bg-gray-700">
+            <tr>
+              <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Container ID</th>
+              <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Weight (kg)</th>
+              <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Cargo Type</th>
+              <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Ship</th>
+              <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Location</th>
+              <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Move To</th>
             </tr>
           </thead>
 
-          <tbody>
+          <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
             {containers.map((c) => (
-              <tr key={c._id} className="border-t dark:border-gray-700 text-center">
-                <td className="p-2">{c.containerId}</td>
-                <td className="p-2">{c.weight}</td>
-                <td className="p-2">
+              <tr key={c._id} className="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">{c.containerId}</td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">{c.weight}</td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">{c.cargo?.type}</td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
                   {c.cargo?.type} ({c.cargo?.ship?.name})
                 </td>
-                <td className="p-2">{c.location}</td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">{c.location}</td>
 
-                <td className="p-2">
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
                   <select
                     onChange={(e) =>
                       updateLocation(c._id, e.target.value)
                     }
-                    className="border p-1 bg-white dark:bg-gray-800 text-gray-900 dark:text-white dark:border-gray-700"
+                    className="block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white dark:border-gray-600"
+                    value={c.location || "Move"} // Set default value to current location or "Move"
                   >
-                    <option>Move</option>
+                    <option value="" disabled>Move</option>
                     <option value="Ship">Ship</option>
                     <option value="Dock">Dock</option>
                     <option value="Warehouse">Warehouse</option>
@@ -130,6 +188,13 @@ function Containers() {
                 </td>
               </tr>
             ))}
+            {containers.length === 0 && (
+              <tr>
+                <td colSpan="6" className="px-6 py-4 text-center text-gray-500 dark:text-gray-400 italic">
+                  No containers available.
+                </td>
+              </tr>
+            )}
           </tbody>
         </table>
       </div>

@@ -1,160 +1,116 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, PieChart, Pie, Cell } from 'recharts';
 
-function Dashboard() {
-  const [stats, setStats] = useState({
-    ships: 0,
-    docks: 0,
-    occupiedDocks: 0,
-    cargo: 0,
-    containers: 0
-  });
-
-  const [containers, setContainers] = useState([]);
+const Dashboard = () => {
+  const [ships, setShips] = useState([]);
+  const [cargo, setCargo] = useState([]);
   const [docks, setDocks] = useState([]);
-
-  async function fetchData() {
-    const ships = await axios.get("http://localhost:5000/api/ships");
-    const docksRes = await axios.get("http://localhost:5000/api/docks");
-    const cargo = await axios.get("http://localhost:5000/api/cargo");
-    const containersRes = await axios.get("http://localhost:5000/api/containers");
-
-    const occupied = docksRes.data.filter((d) => d.status === "Occupied").length;
-
-    setStats({
-      ships: ships.data.length,
-      docks: docksRes.data.length,
-      occupiedDocks: occupied,
-      cargo: cargo.data.length,
-      containers: containersRes.data.length
-    });
-
-    setContainers(containersRes.data);
-    setDocks(docksRes.data);
-  }
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const load = async () => {
-      await fetchData();
+    const fetchData = async () => {
+      try {
+        const [shipsRes, cargoRes, docksRes] = await Promise.all([
+          axios.get("http://localhost:5000/api/ships"),
+          axios.get("http://localhost:5000/api/cargo"),
+          axios.get("http://localhost:5000/api/docks")
+        ]);
+        setShips(shipsRes.data);
+        setCargo(cargoRes.data);
+        setDocks(docksRes.data);
+      } catch (err) {
+        console.error("Error fetching dashboard data:", err);
+      } finally {
+        setLoading(false);
+      }
     };
-
-    load();
+    fetchData();
   }, []);
 
-  // Prepare chart data
-  const barData = [
-    { name: 'Ships', value: stats.ships },
-    { name: 'Docks', value: stats.docks },
-    { name: 'Cargo', value: stats.cargo },
-    { name: 'Containers', value: stats.containers }
+  const totalWeight = cargo.reduce((acc, item) => acc + (item.weight || 0), 0);
+  const availableDocks = docks.filter(d => d.status === "Available").length;
+  const pendingCargo = cargo.filter(c => c.status === "Pending").length;
+
+  const stats = [
+    { title: "Active Ships", value: ships.length.toString(), change: "Total", color: "primary" },
+    { title: "Current Cargo", value: `${totalWeight.toLocaleString()}t`, change: "Weight", color: "success" },
+    { title: "Available Docks", value: availableDocks.toString(), change: "Open", color: "warning" },
+    { title: "Pending Cargo", value: pendingCargo.toString(), change: "Unprocessed", color: "danger" },
   ];
 
-  const pieData = [
-    { name: 'Occupied', value: stats.occupiedDocks },
-    { name: 'Available', value: stats.docks - stats.occupiedDocks }
-  ];
+  // Tailwind requires full class names to be present in the source code for the JIT compiler
+  const colorMap = {
+    primary: "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400",
+    success: "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400",
+    warning: "bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400",
+    danger: "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400",
+  };
 
-  const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042'];
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
+      </div>
+    );
+  }
 
   return (
-    <div>
-      <h1 className="text-2xl font-bold mb-6 text-gray-900 dark:text-white">Dashboard</h1>
-
-      {/* Stats */}
-      <div className="grid grid-cols-5 gap-4 mb-6">
-        <div className="bg-white dark:bg-gray-800 p-4 rounded shadow text-gray-900 dark:text-white">
-          <h2>Total Ships</h2>
-          <p className="text-xl font-bold">{stats.ships}</p>
-        </div>
-
-        <div className="bg-white dark:bg-gray-800 p-4 rounded shadow text-gray-900 dark:text-white">
-          <h2>Total Docks</h2>
-          <p className="text-xl font-bold">{stats.docks}</p>
-        </div>
-
-        <div className="bg-white dark:bg-gray-800 p-4 rounded shadow text-gray-900 dark:text-white">
-          <h2>Occupied Docks</h2>
-          <p className="text-xl font-bold text-red-500">
-            {stats.occupiedDocks}
-          </p>
-        </div>
-
-        <div className="bg-white dark:bg-gray-800 p-4 rounded shadow text-gray-900 dark:text-white">
-          <h2>Total Cargo</h2>
-          <p className="text-xl font-bold">{stats.cargo}</p>
-        </div>
-
-        <div className="bg-white dark:bg-gray-800 p-4 rounded shadow text-gray-900 dark:text-white">
-          <h2>Containers</h2>
-          <p className="text-xl font-bold">{stats.containers}</p>
-        </div>
+    <div className="space-y-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        {stats.map((stat, i) => (
+          <div key={i} className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6 border border-gray-100 dark:border-gray-700 transition-all hover:shadow-md">
+            <div className="flex flex-col">
+              <small className="text-gray-500 dark:text-gray-400 font-bold uppercase text-xs tracking-wider">{stat.title}</small>
+              <h2 className="text-3xl font-extrabold my-2 text-gray-900 dark:text-white">{stat.value}</h2>
+              <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium w-fit ${colorMap[stat.color]}`}>
+                {stat.change} status
+              </span>
+            </div>
+          </div>
+        ))}
       </div>
 
-      {/* Charts */}
-      <div className="grid grid-cols-2 gap-6 mb-6">
-        <div className="bg-white dark:bg-gray-800 p-4 rounded shadow">
-          <h2 className="text-lg font-bold mb-4 text-gray-900 dark:text-white">Overview</h2>
-          <BarChart width={400} height={300} data={barData}>
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="name" />
-            <YAxis />
-            <Tooltip />
-            <Legend />
-            <Bar dataKey="value" fill="#8884d8" />
-          </BarChart>
+      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden">
+        <div className="px-6 py-5 border-b border-gray-50 dark:border-gray-700">
+          <h5 className="text-lg font-bold text-gray-900 dark:text-white">Terminal Operations</h5>
         </div>
-
-        <div className="bg-white dark:bg-gray-800 p-4 rounded shadow">
-          <h2 className="text-lg font-bold mb-4 text-gray-900 dark:text-white">Dock Status</h2>
-          <PieChart width={400} height={300}>
-            <Pie
-              data={pieData}
-              cx={200}
-              cy={150}
-              labelLine={false}
-              label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
-              outerRadius={80}
-              fill="#8884d8"
-              dataKey="value"
-            >
-              {pieData.map((entry, index) => (
-                <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-              ))}
-            </Pie>
-            <Tooltip />
-          </PieChart>
-        </div>
-      </div>
-
-      {/* Container Movement Overview */}
-      <div className="bg-white dark:bg-gray-800 p-4 rounded shadow text-gray-900 dark:text-white">
-        <h2 className="text-lg font-bold mb-4">
-          Container Locations
-        </h2>
-
-        <table className="w-full text-center">
-          <thead>
-            <tr className="bg-gray-200 dark:bg-gray-700">
-              <th className="p-2">Container</th>
-              <th className="p-2">Cargo</th>
-              <th className="p-2">Location</th>
-            </tr>
-          </thead>
-
-          <tbody>
-            {containers.slice(0, 5).map((c) => (
-              <tr key={c._id} className="border-t dark:border-gray-700">
-                <td className="p-2">{c.containerId}</td>
-                <td className="p-2">{c.cargo?.type}</td>
-                <td className="p-2">{c.location}</td>
+        <div className="overflow-x-auto">
+          <table className="w-full text-left border-collapse">
+            <thead className="bg-gray-50 dark:bg-gray-700/50">
+              <tr className="text-gray-500 dark:text-gray-400 text-xs uppercase tracking-wider">
+                <th className="px-6 py-3 font-bold">Vessel Name</th>
+                <th className="px-6 py-3 font-bold">Cargo Type</th>
+                <th className="px-6 py-3 font-bold">Arrival</th>
+                <th className="px-6 py-3 font-bold text-right">Action</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody className="divide-y divide-gray-100 dark:divide-gray-700">
+              {ships.length > 0 ? (
+                ships.slice(0, 5).map((ship) => (
+                  <tr key={ship._id} className="hover:bg-gray-50 dark:hover:bg-gray-700/30 transition-colors">
+                    <td className="px-6 py-4 font-medium text-gray-900 dark:text-white">{ship.name}</td>
+                    <td className="px-6 py-4 text-gray-600 dark:text-gray-300">{ship.imoNumber}</td>
+                    <td className="px-6 py-4 text-gray-600 dark:text-gray-300">{new Date(ship.arrivalTime).toLocaleDateString()}</td>
+                    <td className="px-6 py-4 text-right">
+                      <button className="text-sm font-semibold text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 transition-colors">
+                        Details →
+                      </button>
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan="4" className="px-6 py-8 text-center text-gray-500 dark:text-gray-400 italic">
+                    No terminal operations currently active.
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   );
-}
+};
 
 export default Dashboard;

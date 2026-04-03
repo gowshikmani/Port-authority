@@ -39,6 +39,14 @@ exports.removeShipFromDock = async (req, res) => {
 
     const dock = await Dock.findById(dockId);
 
+    // Find the ship and update its status and dock reference
+    const ship = await Ship.findById(shipId);
+    if (ship) {
+      ship.status = "Available"; // Or "In Transit", depending on desired logic
+      ship.dock = undefined; // Clear the dock reference
+      await ship.save();
+    }
+
     dock.currentShips = dock.currentShips.filter(
       id => id.toString() !== shipId
     );

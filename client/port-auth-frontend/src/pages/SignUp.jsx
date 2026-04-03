@@ -5,24 +5,43 @@ import axios from "axios";
 function SignUp() {
   const [form, setForm] = useState({ name: "", email: "", password: "" });
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
+    setError("");
+
     try {
       await axios.post("http://localhost:5000/api/auth/signup", form);
-      setError("");
       navigate("/login");
     } catch (err) {
-      setError(err?.response?.data?.error || "Failed to register.");
+      if (err.response) {
+        // Server responded with a status code outside of 2xx
+        setError(err.response.data.error || "Registration failed. Please try again.");
+      } else if (err.request) {
+        // Request was made but no response was received (Server is likely down)
+        setError("Cannot reach the server. Please ensure the backend is running on port 5000.");
+      } else {
+        setError("An unexpected error occurred.");
+      }
+      console.error("Auth Error:", err);
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-slate-900">
-      <div className="w-[360px] p-6 bg-white dark:bg-gray-800 shadow rounded text-gray-900 dark:text-white">
-        <h1 className="text-2xl font-bold mb-4">Sign Up</h1>
-        {error && <div className="mb-3 text-red-500">{error}</div>}
+      <div className="w-full max-w-md p-8 bg-white dark:bg-gray-800 shadow-lg rounded-xl text-gray-900 dark:text-white transition-all">
+        <h1 className="text-3xl font-extrabold mb-6 text-center text-blue-600 dark:text-blue-400">Create Account</h1>
+        
+        {error && (
+          <div className="mb-4 p-3 bg-red-100 border-l-4 border-red-500 text-red-700 text-sm rounded">
+            {error}
+          </div>
+        )}
 
         <form onSubmit={handleSubmit} className="space-y-3">
           <input
@@ -51,9 +70,10 @@ function SignUp() {
           />
           <button
             type="submit"
-            className="w-full bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
+            disabled={loading}
+            className={`w-full py-3 rounded-lg font-semibold text-white transition-colors ${loading ? 'bg-gray-400 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700'}`}
           >
-            Register
+            {loading ? "Creating Account..." : "Register"}
           </button>
         </form>
 
