@@ -67,13 +67,17 @@ exports.getDocks = async (req, res) => {
 
 exports.createDock = async (req, res) => {
   try {
-    const { dockNumber, capacity } = req.body;
+    const { dockNumber, capacity, lat, lng } = req.body;
 
-    if (!dockNumber) {
-      return res.status(400).json({ error: "Dock number is required" });
+    if (!dockNumber || !lat || !lng) {
+      return res.status(400).json({ error: "Dock number, latitude, and longitude are required" });
     }
 
-    const dock = new Dock({ dockNumber, capacity: capacity || 1 });
+    const dock = new Dock({ 
+      dockNumber, 
+      capacity: capacity || 1,
+      location: { lat: parseFloat(lat), lng: parseFloat(lng) }
+    });
     await dock.save();
 
     res.status(201).json(dock);

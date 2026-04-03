@@ -14,6 +14,8 @@ function Sidebar() {
         <NavLink to="/cargo" className={linkStyles}>Cargo</NavLink>
         <NavLink to="/docks" className={linkStyles}>Dock</NavLink>
         <NavLink to="/containers" className={linkStyles}>Containers</NavLink>
+        <NavLink to="/timeline" className={linkStyles}>Timeline</NavLink>
+        <NavLink to="/maps" className={linkStyles}>Maps</NavLink>
       </nav>
 
       <p className="mt-10 text-xs text-gray-400">

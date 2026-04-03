@@ -18,6 +18,11 @@ const dockSchema = new mongoose.Schema({
     ref: "Ship"
   }],
 
+  location: {
+    lat: { type: Number, required: true },
+    lng: { type: Number, required: true }
+  },
+
   status: {
     type: String,
     enum: ["Available", "Occupied", "Maintenance"],

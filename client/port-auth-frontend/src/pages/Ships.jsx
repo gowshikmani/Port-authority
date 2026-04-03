@@ -6,7 +6,9 @@ function Ships() {
   const [form, setForm] = useState({
     name: "",
     imoNumber: "",
-    arrivalTime: ""
+    arrivalTime: "",
+    lat: "",
+    lng: ""
   });
 
   // Fetch ships
@@ -29,7 +31,7 @@ function Ships() {
 
     try {
       await axios.post("http://localhost:5000/api/ships", form);
-      setForm({ name: "", imoNumber: "", arrivalTime: "" });
+      setForm({ name: "", imoNumber: "", arrivalTime: "", lat: "", lng: "" });
       fetchShips();
     } catch (error) {
       console.error("Failed to add ship", error);
@@ -42,7 +44,7 @@ function Ships() {
       <h1 className="text-2xl font-bold mb-4">Ships</h1>
 
       {/* Form */}
-      <form onSubmit={handleSubmit} className="flex gap-2 mb-6">
+      <form onSubmit={handleSubmit} className="grid grid-cols-6 gap-2 mb-6">
         <input
           placeholder="Name"
           className="border p-2 bg-white dark:bg-gray-800 text-gray-900 dark:text-white dark:border-gray-700"
@@ -60,6 +62,22 @@ function Ships() {
           className="border p-2 bg-white dark:bg-gray-800 text-gray-900 dark:text-white dark:border-gray-700"
           value={form.arrivalTime}
           onChange={(e) => setForm({ ...form, arrivalTime: e.target.value })}
+        />
+        <input
+          type="number"
+          step="any"
+          placeholder="Latitude"
+          className="border p-2 bg-white dark:bg-gray-800 text-gray-900 dark:text-white dark:border-gray-700"
+          value={form.lat}
+          onChange={(e) => setForm({ ...form, lat: e.target.value })}
+        />
+        <input
+          type="number"
+          step="any"
+          placeholder="Longitude"
+          className="border p-2 bg-white dark:bg-gray-800 text-gray-900 dark:text-white dark:border-gray-700"
+          value={form.lng}
+          onChange={(e) => setForm({ ...form, lng: e.target.value })}
         />
         <button className="bg-blue-500 text-white px-4">Add</button>
       </form>

@@ -6,7 +6,7 @@ function Dock() {
   const [ships, setShips] = useState([]);
   const [selectedDock, setSelectedDock] = useState("");
   const [selectedShip, setSelectedShip] = useState("");
-  const [dockForm, setDockForm] = useState({ dockNumber: "", capacity: 1 });
+  const [dockForm, setDockForm] = useState({ dockNumber: "", capacity: 1, lat: "", lng: "" });
 
   // Fetch docks
   const fetchDocks = async () => {
@@ -33,7 +33,7 @@ function Dock() {
     e.preventDefault();
     try {
       await axios.post("http://localhost:5000/api/docks", dockForm);
-      setDockForm({ dockNumber: "", capacity: 1 });
+      setDockForm({ dockNumber: "", capacity: 1, lat: "", lng: "" });
       fetchDocks();
     } catch (error) {
       console.error("Failed to add dock", error);
@@ -67,7 +67,7 @@ function Dock() {
       <h1 className="text-2xl font-bold mb-6 text-gray-900 dark:text-white">Dock Management</h1>
 
       {/* Add Dock Form */}
-      <form onSubmit={handleAddDock} className="bg-white dark:bg-gray-800 p-4 shadow rounded mb-6 flex gap-4 text-gray-900 dark:text-white">
+      <form onSubmit={handleAddDock} className="bg-white dark:bg-gray-800 p-4 shadow rounded mb-6 grid grid-cols-5 gap-4 text-gray-900 dark:text-white">
         <input
           type="text"
           placeholder="Dock Number"
@@ -82,6 +82,24 @@ function Dock() {
           value={dockForm.capacity}
           onChange={(e) => setDockForm({ ...dockForm, capacity: parseInt(e.target.value) })}
           min="1"
+          className="border p-2 bg-white dark:bg-gray-800 text-gray-900 dark:text-white dark:border-gray-700"
+        />
+        <input
+          type="number"
+          step="any"
+          placeholder="Latitude"
+          value={dockForm.lat}
+          onChange={(e) => setDockForm({ ...dockForm, lat: e.target.value })}
+          required
+          className="border p-2 bg-white dark:bg-gray-800 text-gray-900 dark:text-white dark:border-gray-700"
+        />
+        <input
+          type="number"
+          step="any"
+          placeholder="Longitude"
+          value={dockForm.lng}
+          onChange={(e) => setDockForm({ ...dockForm, lng: e.target.value })}
+          required
           className="border p-2 bg-white dark:bg-gray-800 text-gray-900 dark:text-white dark:border-gray-700"
         />
         <button
