@@ -7,6 +7,10 @@
     "doc": "docs"
   },
   "scripts": {
+    "setup": "npm install && cd server && npm install && cd ../client/port-auth-frontend && npm install",
+    "server": "cd server && npm run dev",
+    "client": "cd client/port-auth-frontend && npm run dev",
+    "dev": "concurrently \"npm run server\" \"npm run client\"",
     "test": "console.log(\"Hello\")"
   },
   "repository": {
@@ -33,6 +37,7 @@
   },
   "devDependencies": {
     "@tailwindcss/vite": "^4.2.2",
-    "tailwindcss": "^4.2.2"
+    "tailwindcss": "^4.2.2",
+    "concurrently": "^8.2.2"
   }
 }

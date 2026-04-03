@@ -1,16 +1,8 @@
-exports.updateCargoStatus = async (req, res) => {
-  try {
-    const { status } = req.body;
+const router = require("express").Router();
+const { addCargo, getCargo, updateCargoStatus } = require("./cargo.controller");
 
-    const cargo = await Cargo.findByIdAndUpdate(
-      req.params.id,
-      { status },
-      { new: true }
-    );
+router.get("/", getCargo);
+router.post("/", addCargo);
+router.put("/:id/status", updateCargoStatus);
 
-    res.json(cargo);
-
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-};
+module.exports = router;
