@@ -1,9 +1,10 @@
 const Ship = require("./ship.model");
 
 exports.getShips = async (req, res) => {
-  const ships = await Ship.find();
+  const ships = await Ship.find().populate('dock');
   res.json(ships);
 };
+
 
 exports.createShip = async (req, res) => {
   const { name, imoNumber, arrivalTime, lat, lng } = req.body;

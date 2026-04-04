@@ -9,7 +9,13 @@ const shipSchema = new mongoose.Schema({
   location: {
     lat: { type: Number },
     lng: { type: Number }
+  },
+  dock: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Dock",
+    default: null
   }
+
 });
 
 module.exports = mongoose.model("Ship", shipSchema);

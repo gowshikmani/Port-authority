@@ -174,12 +174,13 @@ function Dock() {
           onChange={(e) => setSelectedShip(e.target.value)}
         >
           <option>Select Ship</option>
-          {ships.map((ship) => (
+          {ships.filter(ship => ship.status !== "Docked").map((ship) => (
             <option key={ship._id} value={ship._id}>
-              {ship.name}
+              {ship.name} ({ship.status})
             </option>
           ))}
         </select>
+
 
         <button onClick={assignShip} className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors">
           Assign
