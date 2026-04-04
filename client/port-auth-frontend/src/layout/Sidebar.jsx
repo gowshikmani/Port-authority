@@ -18,10 +18,7 @@ function Sidebar() {
         <NavLink to="/maps" className={linkStyles}>Maps</NavLink>
       </nav>
 
-      <p className="mt-10 text-xs text-gray-400">
-        Tip: press <kbd className="bg-gray-700 px-1 rounded">Ctrl</kbd>+<kbd className="bg-gray-700 px-1 rounded">J</kbd> to toggle theme.
-      </p>
-    </div>
+      </div>
   );
 }
 
