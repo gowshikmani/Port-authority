@@ -76,6 +76,20 @@ function Cargo() {
     }
   };
 
+  // Delete cargo
+  const handleDelete = async (id) => {
+    if (!confirm("Are you sure you want to delete this cargo?")) return;
+    setError("");
+    try {
+      await axios.delete(`http://localhost:5000/api/cargo/${id}`);
+      await fetchCargo();
+      await fetchShips();
+    } catch (error) {
+      console.error(error);
+      setError(error?.response?.data?.error || "Failed to delete cargo.");
+    }
+  };
+
   // Update status
   const updateStatus = async (id, status) => {
     if (!status || status === "Update") return;
@@ -179,21 +193,29 @@ function Cargo() {
                 </td>
 
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
-                  <select
-                    onChange={(e) =>
-                      updateStatus(cargo._id, e.target.value)
-                    }
-                    className="block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-green-500 focus:border-green-500 sm:text-sm rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white dark:border-gray-600"
-                    defaultValue=""
-                  >
-                    <option value="" disabled>
-                      Update
-                    </option>
-                    <option value="Loading">Loading</option>
-                    <option value="Unloading">Unloading</option>
-                    <option value="Stored">Stored</option>
-                    <option value="Dispatched">Dispatched</option>
-                  </select>
+                  <div className="flex gap-2">
+                    <select
+                      onChange={(e) =>
+                        updateStatus(cargo._id, e.target.value)
+                      }
+                      className="flex-1 block pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-green-500 focus:border-green-500 sm:text-sm rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white dark:border-gray-600"
+                      defaultValue=""
+                    >
+                      <option value="" disabled>
+                        Update
+                      </option>
+                      <option value="Loading">Loading</option>
+                      <option value="Unloading">Unloading</option>
+                      <option value="Stored">Stored</option>
+                      <option value="Dispatched">Dispatched</option>
+                    </select>
+                    <button
+                      onClick={() => handleDelete(cargo._id)}
+                      className="text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300 text-sm font-medium px-2 py-1 border rounded hover:bg-red-50 dark:hover:bg-red-900"
+                    >
+                      Delete
+                    </button>
+                  </div>
                 </td>
               </tr>
             ))}

@@ -45,6 +45,7 @@ exports.getCargo = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
+
 exports.updateCargoStatus = async (req, res) => {
   try {
     const { status } = req.body;
@@ -61,3 +62,16 @@ exports.updateCargoStatus = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
+
+exports.deleteCargo = async (req, res) => {
+  try {
+    const cargo = await Cargo.findByIdAndDelete(req.params.id);
+    if (!cargo) {
+      return res.status(404).json({ error: "Cargo not found" });
+    }
+    res.json({ message: "Cargo deleted successfully" });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+

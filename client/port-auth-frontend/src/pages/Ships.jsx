@@ -37,6 +37,18 @@ function Ships() {
   }, []);
 
   // Add ship
+  const handleDelete = async (id) => {
+    if (!confirm("Are you sure you want to delete this ship?")) return;
+    setError("");
+    try {
+      await axios.delete(`http://localhost:5000/api/ships/${id}`);
+      fetchShips();
+    } catch (error) {
+      console.error("Failed to delete ship", error);
+      setError(error?.response?.data?.error || "Failed to delete ship.");
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
@@ -145,7 +157,12 @@ function Ships() {
                 </span>
               </td>
               <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                {/* Add any ship-specific actions here if needed */}
+                <button
+                  onClick={() => handleDelete(ship._id)}
+                  className="text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300 text-sm font-medium"
+                >
+                  Delete
+                </button>
               </td>
             </tr>
           ))}

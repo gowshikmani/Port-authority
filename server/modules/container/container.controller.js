@@ -46,6 +46,7 @@ exports.updateLocation = async (req, res) => {
   }
 };
 
+
 exports.getContainers = async (req, res) => {
   try {
     const containers = await Container.find()
@@ -53,6 +54,18 @@ exports.getContainers = async (req, res) => {
 
     res.json(containers);
 
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+exports.deleteContainer = async (req, res) => {
+  try {
+    const container = await Container.findByIdAndDelete(req.params.id);
+    if (!container) {
+      return res.status(404).json({ error: "Container not found" });
+    }
+    res.json({ message: "Container deleted successfully" });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

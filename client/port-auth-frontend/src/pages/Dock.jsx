@@ -41,8 +41,14 @@ function Dock() {
   const handleAddDock = async (e) => {
     e.preventDefault();
     setError("");
+    const latNum = parseFloat(dockForm.lat);
+    const lngNum = parseFloat(dockForm.lng);
+    if (!dockForm.dockNumber || isNaN(latNum) || isNaN(lngNum)) {
+      setError("Dock number, latitude, and longitude are required and must be valid numbers.");
+      return;
+    }
     try {
-      await axios.post("http://localhost:5000/api/docks", dockForm);
+      await axios.post("http://localhost:5000/api/docks", { ...dockForm, lat: latNum, lng: lngNum });
       setDockForm({ dockNumber: "", capacity: 1, lat: "", lng: "" });
       fetchDocks();
     } catch (error) {
@@ -86,6 +92,19 @@ function Dock() {
     } catch (error) {
       console.error("Failed to remove ship:", error);
       setError(error?.response?.data?.error || "Failed to remove ship.");
+    }
+  };
+
+  const handleDelete = async (id) => {
+    if (!confirm("Are you sure you want to delete this dock?")) return;
+    setError("");
+    try {
+      await axios.delete(`http://localhost:5000/api/docks/${id}`);
+      fetchDocks();
+      fetchShips();
+    } catch (error) {
+      console.error("Failed to delete dock", error);
+      setError(error?.response?.data?.error || "Failed to delete dock.");
     }
   };
 
@@ -230,7 +249,12 @@ function Dock() {
                   ))}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                  {/* Add any dock-specific actions here if needed */}
+                  <button
+                    onClick={() => handleDelete(dock._id)}
+                    className="text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300 text-sm font-medium"
+                  >
+                    Delete
+                  </button>
                 </td>
               </tr>
             ))}

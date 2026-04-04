@@ -10,5 +10,6 @@ router.get("/", getDocks);
 router.post("/", createDock);
 router.post("/assign", assignShipToDock);
 router.post("/remove", removeShipFromDock);
+router.delete("/:id", deleteDock);
 
 module.exports = router;

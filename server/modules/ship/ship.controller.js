@@ -6,6 +6,7 @@ exports.getShips = async (req, res) => {
 };
 
 
+
 exports.createShip = async (req, res) => {
   const { name, imoNumber, arrivalTime, lat, lng } = req.body;
 
@@ -24,3 +25,16 @@ exports.createShip = async (req, res) => {
   await ship.save();
   res.status(201).json(ship);
 };
+
+exports.deleteShip = async (req, res) => {
+  try {
+    const ship = await Ship.findByIdAndDelete(req.params.id);
+    if (!ship) {
+      return res.status(404).json({ error: "Ship not found" });
+    }
+    res.json({ message: "Ship deleted successfully" });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+

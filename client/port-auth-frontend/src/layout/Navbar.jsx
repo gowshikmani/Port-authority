@@ -1,12 +1,14 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback, useEffect as UseEffect2 } from "react";
 import { useNavigate } from "react-router-dom";
 
 function Navbar() {
   const navigate = useNavigate();
-  const [theme, setTheme] = useState(() => {
-    if (typeof window === "undefined") return "light";
-    return localStorage.getItem("theme") || "light";
+const [theme, setTheme] = useState(() => {
+    if (typeof window === "undefined") return null;
+    return localStorage.getItem("theme") || null;
   });
+
+  const [systemDark, setSystemDark] = useState(false);
 
   const [inverted, setInverted] = useState(() => {
     if (typeof window === "undefined") return false;
@@ -14,17 +16,29 @@ function Navbar() {
   });
 
   useEffect(() => {
-    document.documentElement.classList.toggle("dark", theme === "dark");
-    document.documentElement.classList.toggle("invert-colors", inverted);
-    localStorage.setItem("theme", theme);
-    localStorage.setItem("inverted", String(inverted));
-  }, [theme, inverted]);
+    if (typeof window === 'undefined') return;
+    const mq = window.matchMedia('(prefers-color-scheme: dark)');
+    setSystemDark(mq.matches);
+    const handleChange = (e) => setSystemDark(e.matches);
+    mq.addEventListener('change', handleChange);
+    return () => mq.removeEventListener('change', handleChange);
+  }, []);
 
-  useEffect(() => {
+useEffect(() => {
+    const isDark = theme === "dark" || (theme === null && systemDark);
+    document.documentElement.classList.toggle("dark", isDark);
+    document.documentElement.classList.toggle("invert-colors", inverted);
+    if (theme !== null) {
+      localStorage.setItem("theme", theme);
+    }
+    localStorage.setItem("inverted", String(inverted));
+  }, [theme, systemDark, inverted]);
+
+useEffect(() => {
     const keydown = (e) => {
       if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "j") {
         e.preventDefault();
-        setTheme((prev) => (prev === "dark" ? "light" : "dark"));
+        toggleTheme();
       }
 
       if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "k") {
@@ -37,9 +51,14 @@ function Navbar() {
     return () => window.removeEventListener("keydown", keydown);
   }, []);
 
-  const toggleTheme = () => {
-    setTheme((prev) => (prev === "dark" ? "light" : "dark"));
-  };
+const toggleTheme = useCallback(() => {
+    if (theme === null) {
+      // Switch from system to manual opposite of current system
+      setTheme(systemDark ? "light" : "dark");
+    } else {
+      setTheme((prev) => (prev === "dark" ? "light" : "dark"));
+    }
+  }, [theme, systemDark]);
 
   const toggleInverted = () => {
     setInverted((prev) => !prev);
@@ -50,13 +69,21 @@ function Navbar() {
       <div className="max-w-7xl mx-auto flex justify-between items-center">
         <h1 className="text-xl font-semibold">Port Authority Dashboard</h1>
         <div className="flex items-center gap-2">
-          <p className="text-sm">{theme === "dark" ? "Dark" : "Light"} Mode</p>
+<p className="text-sm">
+  {theme === null 
+    ? `System (${systemDark ? "Dark" : "Light"})` 
+    : `${theme === "dark" ? "Dark" : "Light"}`
+  } Mode
+</p>
           <button
             onClick={toggleTheme}
             className="px-3 py-1 rounded bg-gray-200 dark:bg-gray-800 hover:bg-gray-300 dark:hover:bg-gray-700 transition-all duration-150"
-            aria-label="Toggle light or dark mode"
+aria-label="Toggle theme (system/manual, clear localStorage.theme to reset)"
           >
-            {theme === "dark" ? "☀️ Light" : "🌙 Dark"}
+{theme === null 
+  ? (systemDark ? "☀️ System Light" : "🌙 System Dark")
+  : (theme === "dark" ? "☀️ Light" : "🌙 Dark")
+}
           </button>
 
           <button

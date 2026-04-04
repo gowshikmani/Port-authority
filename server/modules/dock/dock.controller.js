@@ -81,14 +81,32 @@ exports.createDock = async (req, res) => {
       return res.status(400).json({ error: "Dock number, latitude, and longitude are required" });
     }
 
+    const parsedLat = parseFloat(lat);
+    const parsedLng = parseFloat(lng);
+    if (isNaN(parsedLat) || isNaN(parsedLng)) {
+      return res.status(400).json({ error: "Invalid latitude or longitude" });
+    }
+
     const dock = new Dock({ 
       dockNumber, 
       capacity: capacity || 1,
-      location: { lat: parseFloat(lat), lng: parseFloat(lng) }
+      location: { lat: parsedLat, lng: parsedLng }
     });
     await dock.save();
 
     res.status(201).json(dock);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+exports.deleteDock = async (req, res) => {
+  try {
+    const dock = await Dock.findByIdAndDelete(req.params.id);
+    if (!dock) {
+      return res.status(404).json({ error: "Dock not found" });
+    }
+    res.json({ message: "Dock deleted successfully" });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

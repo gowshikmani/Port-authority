@@ -9,5 +9,6 @@ const {
 router.post("/", addContainer);
 router.get("/", getContainers);
 router.put("/:id/location", updateLocation);
+router.delete("/:id", deleteContainer);
 
 module.exports = router;
