@@ -1,5 +1,5 @@
 const router = require("express").Router();
-const { addCargo, getCargo, updateCargoStatus } = require("./cargo.controller");
+const { addCargo, getCargo, updateCargoStatus, deleteCargo } = require("./cargo.controller");
 
 router.get("/", getCargo);
 router.post("/", addCargo);

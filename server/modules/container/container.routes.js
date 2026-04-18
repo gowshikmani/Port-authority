@@ -3,7 +3,8 @@ const router = require("express").Router();
 const {
   addContainer,
   updateLocation,
-  getContainers
+  getContainers,
+  deleteContainer
 } = require("./container.controller");
 
 router.post("/", addContainer);

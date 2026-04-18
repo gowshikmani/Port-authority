@@ -3,7 +3,8 @@ const {
   getDocks,
   createDock,
   assignShipToDock,
-  removeShipFromDock
+  removeShipFromDock,
+  deleteDock
 } = require("./dock.controller");
 
 router.get("/", getDocks);

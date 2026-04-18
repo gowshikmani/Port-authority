@@ -31,7 +31,7 @@ exports.login = async (req, res) => {
     }
 
     const user = await User.findOne({ email: email.toLowerCase() });
-    if (!user || user.password !== password) {
+    if (!user || !(await user.comparePassword(password))) {
       return res.status(401).json({ error: "Invalid email or password" });
     }
 
@@ -40,7 +40,8 @@ exports.login = async (req, res) => {
         id: user._id,
         name: user.name,
         email: user.email
-      }
+      },
+      token: "dummy-jwt-token" // Add real JWT later if needed
     });
   } catch (err) {
     return res.status(500).json({ error: err.message });

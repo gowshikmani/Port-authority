@@ -13,13 +13,9 @@ app.use(express.json());
 // Replace <username> and <password> in .env MONGO_URI before running
 const mongoURI = process.env.MONGO_URI || "mongodb://localhost:27017/port-authority";
 
-mongoose
-  .connect(mongoURI, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true
-  })
-  .then(() => console.log("Connected to MongoDB!"))
-  .catch(err => console.error("Connection error", err));
+mongoose.connect(mongoURI)
+  .then(() => console.log("✅ Connected to MongoDB!"))
+  .catch(err => console.error("❌ MongoDB Connection error:", err));
 
 // Routes
 app.use("/api/auth", require("./modules/user/user.routes"));
